@@ -12,7 +12,14 @@ var DB *gorm.DB
 
 func ConnectDatabase() {
     // Build connection string from env variables
-    dsn := "host=localhost user=postgres dbname=hustle port=5432 sslmode=disable TimeZone=UTC"
+    host := getEnv("DB_HOST", "localhost")
+    user := getEnv("DB_USER", "postgres")
+    dbname := getEnv("DB_NAME", "hustle")
+    port := getEnv("DB_PORT", "5432")
+    password := getEnv("DB_PASSWORD", "")
+    sslmode := getEnv("DB_SSLMODE", "require")
+    
+    dsn := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbname + " port=" + port + " sslmode=" + sslmode + " TimeZone=UTC"
     
     database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
