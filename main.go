@@ -10,7 +10,8 @@ import (
 func main() {
   	r := gin.Default()
 
-	models.ConnectDatabase() // new
+	models.ConnectDatabase()
+	r.GET("/healthcheck", controllers.HealthCheck)
 	r.GET("/users", controllers.FindUsers)
 	r.POST("/users", controllers.CreateUser)
 
