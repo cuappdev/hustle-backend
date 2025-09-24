@@ -23,12 +23,12 @@ func ConnectDatabase() {
     
     database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
-        panic("Failed to connect to database!")
+        return err
     }
 
     sqlDB, err := database.DB()
     if err != nil {
-        panic("Failed to get underlying sql.DB")
+        return err
     }
     
     sqlDB.SetMaxIdleConns(10)
@@ -39,7 +39,7 @@ func ConnectDatabase() {
     err = database.AutoMigrate(&User{})
     if err != nil {
         log.Printf("Failed to migrate database: %v", err)
-        panic("Database migration failed!")
+        return err
     }
 
     DB = database
