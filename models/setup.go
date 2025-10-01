@@ -20,7 +20,6 @@ func ConnectDatabase() error {
     password := getEnv("DB_PASSWORD", "")
     sslmode := getEnv("DB_SSLMODE", "require")
     
-    dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode)
     log.Println("Connecting to database with DSN:", dsn)
 
     database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
