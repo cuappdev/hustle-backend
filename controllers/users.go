@@ -26,8 +26,19 @@ func CreateUser(c *gin.Context) {
     return
   }
 
+  uid := middleware.UIDFrom(c)
+  if uid == "" {
+    c.JSON(http.StatusUnauthorized, gin.H{"error": "midding firebase uid"})
+    return
+  }
+
   // Create user
-  user := models.User{FirstName: input.FirstName, LastName: input.LastName, Email: input.Email}
+  user := models.User{
+    FirstName: input.FirstName, 
+    LastName: input.LastName, 
+    Email: input.Email,
+    Firebase_UID: uid
+  }
   models.DB.Create(&user)
 
   c.JSON(http.StatusOK, gin.H{"data": user})
