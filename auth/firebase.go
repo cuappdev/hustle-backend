@@ -1,6 +1,7 @@
-package firebaseadmin
+package auth
 
 import (
+	"fmt"
 	"context"
 
 	firebase "firebase.google.com/go/v4"
@@ -23,5 +24,5 @@ func NewAuthClient(c context.Context, serviceAccountPath string) (*auth.Client, 
 		return nil, fmt.Errorf("failed to create Firebase auth client: %v", err)
 	}
 
-	return authClient
+	return authClient, err
 }

@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
   	"github.com/cuappdev/hustle-backend/models"
   	"github.com/cuappdev/hustle-backend/controllers"
-	"github.com/cuappdev/hustle-backend/firebaseadmin"
+	"github.com/cuappdev/hustle-backend/auth"
 	"github.com/cuappdev/hustle-backend/middleware"  
 )
 
@@ -21,16 +22,23 @@ func main() {
 	log.Println("Connecting to database...")
 	models.ConnectDatabase()
 
-	ac, err := firebaseadmin.NewAuthClient(context.Background(), os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+	ac, err := auth.NewAuthClient(context.Background(), "service-account-key.json")
 	if err != nil { log.Fatalf("firebase init: %v", err) }
 
 	log.Println("Setting up routes...")
 	// Public routes
 	r.GET("/healthcheck", controllers.HealthCheck)
+	
+	// Auth routes (public)
+	api := r.Group("/api")
+	{
+		api.POST("/verify-token", controllers.VerifyToken(ac))
+		api.POST("/refresh-token", controllers.RefreshToken())
+	}
 
 	// Protected routes
-	authd := r.Group("/api")
-	authd.Use(middleware.RequireFirebaseUser(ac))
+	authd := api.Group("")
+	authd.Use(middleware.RequireAuth(ac))
 	{
 		authd.GET("/users", controllers.FindUsers)
 		authd.POST("/users", controllers.CreateUser)
