@@ -1,5 +1,9 @@
 package models
 
+import (
+    "log"
+)
+
 type User struct {
   ID            uint   `json:"id" gorm:"primary_key"`
   Firebase_UID  string `json:"firebase_uid" gorm:"uniqueIndex"`
