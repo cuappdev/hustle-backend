@@ -26,14 +26,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	func getwdSafe() string {
-		wd, err := os.Getwd()
-		if err != nil {
-			return "unknown"
-		}
-		return wd
-	}
-
 	// Initialize Firebase Auth SAFELY
 	serviceAccountPath := "service-account-key.json"
 	// Log working dir and check file exists
@@ -72,8 +64,10 @@ func main() {
   	r.Run()
 }
 
-
-// TODO
-
-// Copy over .github folders
-// Docker file and docker compose ymlhow
+func getwdSafe() string {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "unknown"
+	}
+	return wd
+}
