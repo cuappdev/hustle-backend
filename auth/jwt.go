@@ -27,7 +27,8 @@ type JWTService struct {
 func NewJWTService() *JWTService {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		secret = "default-secret-key-change-in-production" // Fallback for development
+		log.Println("[WARN] JWT_SECRET environment variable not set! Using default value.")
+		secret = "default-secret-key-change-in-production"
 	}
 	return &JWTService{
 		secretKey: []byte(secret),
