@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
   	"github.com/cuappdev/hustle-backend/models"
