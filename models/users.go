@@ -25,6 +25,7 @@ func FindOrCreateUser(firebaseUID, email, firstName, lastName string) (*User, er
 	result := DB.Where("firebase_uid = ?", firebaseUID).First(&user)
 	
 	if result.Error != nil {
+		log.Printf("[ERROR] User not found by Firebase UID (%s): %v", firebaseUID, result.Error)
 		// User doesn't exist, create new one
 		user = User{
 			Firebase_UID: firebaseUID,
@@ -34,6 +35,7 @@ func FindOrCreateUser(firebaseUID, email, firstName, lastName string) (*User, er
 		}
 		
 		if err := DB.Create(&user).Error; err != nil {
+			log.Printf("[ERROR] Failed to create user (Firebase UID: %s): %v", firebaseUID, err)
 			return nil, err
 		}
 	}

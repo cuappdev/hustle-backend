@@ -20,10 +20,34 @@ func main() {
 	log.Println("Starting hustle-backend...")
   	r := gin.Default()
 	log.Println("Connecting to database...")
-	models.ConnectDatabase()
+	// Connect to DB
+	if err := models.ConnectDatabase(); err != nil {
+		log.Printf("[FATAL] Database connection failed: %v", err)
+		os.Exit(1)
+	}
 
-	ac, err := auth.NewAuthClient(context.Background(), "service-account-key.json")
-	if err != nil { log.Fatalf("firebase init: %v", err) }
+	func getwdSafe() string {
+		wd, err := os.Getwd()
+		if err != nil {
+			return "unknown"
+		}
+		return wd
+	}
+
+	// Initialize Firebase Auth SAFELY
+	serviceAccountPath := "service-account-key.json"
+	// Log working dir and check file exists
+	if _, err := os.Stat(serviceAccountPath); err != nil {
+		log.Printf("[FATAL] Missing service account file: %s (cwd: %s): %v", serviceAccountPath, getwdSafe(), err)
+		os.Exit(1)
+	}
+	ac, err := auth.NewAuthClient(context.Background(), serviceAccountPath)
+	if err != nil {
+		log.Printf("[FATAL] Firebase init failed: %v", err)
+		os.Exit(1)
+	}
+
+	
 
 	log.Println("Setting up routes...")
 	// Public routes
