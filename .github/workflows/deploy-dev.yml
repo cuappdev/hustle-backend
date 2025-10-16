@@ -26,6 +26,7 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
+          platforms: linux/amd64
           push: true
           tags: cornellappdev/hustle-dev:${{ steps.vars.outputs.sha_short }}
       - name: Remote SSH and Deploy
