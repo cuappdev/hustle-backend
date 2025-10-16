@@ -24,7 +24,6 @@ func main() {
 	// Connect to DB
 	if err := models.ConnectDatabase(); err != nil {
 		log.Printf("[FATAL] Database connection failed: %v", err)
-		os.Exit(1)
 	}
 
 	// Initialize Firebase Auth SAFELY
@@ -32,12 +31,10 @@ func main() {
 	// Log working dir and check file exists
 	if _, err := os.Stat(serviceAccountPath); err != nil {
 		log.Printf("[FATAL] Missing service account file: %s (cwd: %s): %v", serviceAccountPath, getwdSafe(), err)
-		os.Exit(1)
 	}
 	ac, err := auth.NewAuthClient(context.Background(), serviceAccountPath)
 	if err != nil {
 		log.Printf("[FATAL] Firebase init failed: %v", err)
-		os.Exit(1)
 	}
 
 	
