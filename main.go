@@ -26,6 +26,9 @@ func main() {
 		log.Printf("[FATAL] Database connection failed: %v", err)
 	}
 
+	// Migrate fcm token table
+	models.DB.AutoMigrate(&models.FCMToken{})
+
 	// Initialize Firebase Auth SAFELY
 	serviceAccountPath := "service-account-key.json"
 	// Log working dir and check file exists
@@ -37,6 +40,10 @@ func main() {
 		log.Printf("[FATAL] Firebase init failed: %v", err)
 	}
 
+	// Initialize Firebase Messaging
+	if err := auth.InitFirebase(serviceAccountPath); err != nil {
+		log.Printf("[FATAL] Firebase Messaging init failed: %v", err)
+	}
 	
 
 	log.Println("Setting up routes...")
@@ -54,8 +61,13 @@ func main() {
 	authd := api.Group("")
 	authd.Use(middleware.RequireAuth(ac))
 	{
+		// User routes
 		authd.GET("/users", controllers.FindUsers)
 		authd.POST("/users", controllers.CreateUser)
+		// Notification routes
+		authd.POST("/fcm/register", controllers.RegisterFCMToken)
+        authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
+        authd.POST("/fcm/test", controllers.SendTestNotification)
 	}
 	log.Println("Server starting on :8080")
 
