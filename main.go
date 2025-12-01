@@ -68,6 +68,30 @@ func main() {
 		authd.POST("/fcm/register", controllers.RegisterFCMToken)
         authd.DELETE("/fcm/delete", controllers.DeleteFCMToken)
         authd.POST("/fcm/test", controllers.SendTestNotification)
+
+		// Initialize service controller
+		serviceController := controllers.NewServiceController()
+
+		// Service Listing routes
+		serviceListings := authd.Group("/service-listings")
+		{
+			serviceListings.GET("", serviceController.GetServiceListings)
+			serviceListings.POST("", serviceController.CreateServiceListing)
+			serviceListings.GET("/:id", serviceController.GetServiceListing)
+			serviceListings.PATCH("/:id", serviceController.UpdateServiceListing)
+			serviceListings.DELETE("/:id", serviceController.DeleteServiceListing)
+
+			// Nested services routes
+			serviceListings.GET("/:id/services", serviceController.GetServices)
+			serviceListings.POST("/:id/services", serviceController.AddService)
+		}
+
+		// Individual service routes
+		services := authd.Group("/services")
+		{
+			services.PATCH("/:id", serviceController.UpdateService)
+			services.DELETE("/:id", serviceController.DeleteService)
+		}
 	}
 	log.Println("Server starting on :8080")
 
